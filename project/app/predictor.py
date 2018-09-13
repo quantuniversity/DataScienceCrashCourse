@@ -91,4 +91,4 @@ def api_message():
 		return "415 Unsupported Media Type"
 
 if __name__== '__main__':
-  	app.run(debug=False,host='0.0.0.0', port=5000) 
+  	app.run(debug=False,host='0.0.0.0', port=80) 
