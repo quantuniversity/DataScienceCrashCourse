@@ -43,7 +43,7 @@ def get_interest_rate(model, sample, df_max, df_min, categories, features):
     for feat in features:
         features_vector[feat] = sample[feat]
     
-    
+    # check numerical features
     def is_number(s):
         try:
             float(s)
@@ -51,23 +51,22 @@ def get_interest_rate(model, sample, df_max, df_min, categories, features):
         except ValueError:
             return False
     
+    # remove target feature
     df_max_feature =df_max[~df_max.index.isin(['int_rate'])]
     df_min_feature =df_min[~df_min.index.isin(['int_rate'])]
     feature_vector_norm = []
 
+    # convert categorical features
     for key, value in sample.items():
         if key in categories:  		
             features_vector[key] = categories[key].index(features_vector[key])
-        # print(key, features[key])
-        # if(key == 'loan_status_Binary'):
-        	# features_vector[key] = 1;
         features_vector[key] = (float(features_vector[key])-float(df_min_feature[key]))/(float(df_max_feature[key])-float(df_min_feature[key]))
         feature_vector_norm.append(features_vector[key])
     return (model.predict([np.array(feature_vector_norm)]))*(df_max['int_rate']-df_min['int_rate']) + df_min['int_rate']
 
 @app.route('/predict',methods = ['POST'])
 def predict():
-	# try:
+	try:
 		if request.method == 'POST':
 			sample = request.form.to_dict()
 			algo = sample.pop('algo')
@@ -79,8 +78,8 @@ def predict():
 				model =  pickle.load(open(RAND_FOREST_MODEL, 'rb'))
 			pdata = pickle.load(open(PRED_DATA, 'rb'))
 			return render_template("prediction.html", interest = (str(get_interest_rate(model, sample, pdata[1], pdata[2], pdata[3],pdata[4]))))
-	# except:
-		# return "Please fill in all the fields!"
+	except:
+		return "Please fill in all the fields!"
 
 
 @app.route('/api/predict', methods = ['POST'])
