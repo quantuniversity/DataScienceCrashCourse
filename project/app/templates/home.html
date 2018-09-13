@@ -6,12 +6,13 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
     <style type="text/css">
     #header{
-        background-color: lightblue;
+        background-color: #435966;
         width:100vw;
         height:50px;
         text-align: center;
         display: table-cell;
         vertical-align: middle;
+        color: white;
     }
     #footer{
         clear:both;
@@ -33,7 +34,12 @@
 <body>
     <div id="main">
         <div id="header">
-            User details for interest rate prediction
+            <div style="float:left">
+                <img src="/static/logo.PNG"/>
+            </div>
+            <div>
+                <h1>Interest Rate Predictor</h1>
+            </div>
         </div>
         <div>
             <form action = "/predict" method = "POST" class="pure-form pure-form-aligned">
@@ -132,9 +138,9 @@
                     </div> -->
 
                     <div class="pure-control-group">
-                        <p> <label> Prev Loan Status </label> <select name= addr_state method="GET" action="/">
+                        <p> <label> Prev Loan Status </label> <select name= loan_status_Binary method="GET" action="/">
                             {% for s in status %}
-                            <option value= "{{s}}" SELECTED>{{s}}</option>"
+                            <option value= "{{loop.index-1}}" SELECTED>{{s}}</option>"
                             {% endfor %}
                         </select></p>
                     </div>

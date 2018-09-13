@@ -19,7 +19,6 @@ from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 app = Flask(__name__)
-app.debug = True
 
 PRED_DATA = 'prediction_data.data'
 NN_MODEL = 'nn_model.model'
@@ -30,7 +29,7 @@ RAND_FOREST_MODEL = 'rand_forest.model'
 @app.route('/', methods=['GET'])
 def dropdown():
 	pdata = pickle.load(open(PRED_DATA, 'rb'))
-	return render_template('home.html', algo = ['NEURAL_NETWORK', 'LINEAR_REGRESSION', 'RANDOM_FOREST'], term = pdata[3]['term'], grade = pdata[3]['grade'],sub_grade = pdata[3]['sub_grade'], emp_length = pdata[3]['emp_length'], home_ownership = pdata[3]['home_ownership'], verification_status = pdata[3]['verification_status'], purpose = pdata[3]['purpose'], addr_state = pdata[3]['addr_state'], status = ['APPROVED', 'NOT APPROVED'])
+	return render_template('home.html', algo = ['NEURAL_NETWORK', 'LINEAR_REGRESSION', 'RANDOM_FOREST'], term = pdata[3]['term'], grade = pdata[3]['grade'],sub_grade = pdata[3]['sub_grade'], emp_length = pdata[3]['emp_length'], home_ownership = pdata[3]['home_ownership'], verification_status = pdata[3]['verification_status'], purpose = pdata[3]['purpose'], addr_state = pdata[3]['addr_state'], status = ['NOT APPROVED','APPROVED'])
 
 # sample = {"loan_amnt" : 10902,"term" : " 36 months","installment": 100,"grade": "A","sub_grade": "A2","emp_length": "7 years","home_ownership": "MORTGAGE","annual_inc": 20000,"verification_status": "Source Verified","purpose": "small_business","addr_state": "MA","dti": 15.2,"delinq_2yrs": 1,"inq_last_6mths": 3,"loan_status_Binary": 1}
 
@@ -59,15 +58,16 @@ def get_interest_rate(model, sample, df_max, df_min, categories, features):
     for key, value in sample.items():
         if key in categories:  		
             features_vector[key] = categories[key].index(features_vector[key])
-        if(key == 'loan_status_Binary'):
-        	features_vector[key] = 1;
+        # print(key, features[key])
+        # if(key == 'loan_status_Binary'):
+        	# features_vector[key] = 1;
         features_vector[key] = (float(features_vector[key])-float(df_min_feature[key]))/(float(df_max_feature[key])-float(df_min_feature[key]))
         feature_vector_norm.append(features_vector[key])
     return (model.predict([np.array(feature_vector_norm)]))*(df_max['int_rate']-df_min['int_rate']) + df_min['int_rate']
 
 @app.route('/predict',methods = ['POST'])
 def predict():
-	try:
+	# try:
 		if request.method == 'POST':
 			sample = request.form.to_dict()
 			algo = sample.pop('algo')
@@ -79,8 +79,8 @@ def predict():
 				model =  pickle.load(open(RAND_FOREST_MODEL, 'rb'))
 			pdata = pickle.load(open(PRED_DATA, 'rb'))
 			return render_template("prediction.html", interest = (str(get_interest_rate(model, sample, pdata[1], pdata[2], pdata[3],pdata[4]))))
-	except:
-		return "Please fill in all the fields!"
+	# except:
+		# return "Please fill in all the fields!"
 
 
 @app.route('/api/predict', methods = ['POST'])
@@ -91,4 +91,4 @@ def api_message():
 		return "415 Unsupported Media Type"
 
 if __name__== '__main__':
-  	app.run(debug=True, port=5000) 
+  	app.run(debug=False,host='0.0.0.0', port=5000) 
