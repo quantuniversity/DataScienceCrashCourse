@@ -36,7 +36,7 @@
             User details for interest rate prediction
         </div>
         <div>
-            <form action = "http://localhost/predict" method = "POST" class="pure-form pure-form-aligned">
+            <form action = "/predict" method = "POST" class="pure-form pure-form-aligned">
                 <fieldset>
 
                     <div class="pure-control-group">
@@ -126,9 +126,17 @@
                     <div class="pure-control-group">
                         <p> <label> Inquiries in past 6 months </label><input type = "text" class="pure-input-rounded" name = "inq_last_6mths" placeholder="Upto 10" /></p>
                     </div>
-
+<!-- 
                     <div class="pure-control-group">
                         <p> <label> Loan status </label><input type = "text" class="pure-input-rounded" name = "loan_status_Binary" placeholder="1 or 0"/></p>
+                    </div> -->
+
+                    <div class="pure-control-group">
+                        <p> <label> Prev Loan Status </label> <select name= addr_state method="GET" action="/">
+                            {% for s in status %}
+                            <option value= "{{s}}" SELECTED>{{s}}</option>"
+                            {% endfor %}
+                        </select></p>
                     </div>
 
                     <div class="pure-control-group">

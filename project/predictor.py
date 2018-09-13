@@ -1,3 +1,5 @@
+import sys
+
 from flask import Flask
 from flask import json
 from flask import request, render_template, flash
@@ -25,11 +27,10 @@ LIN_REG_MODEL = 'lin_reg_model.model'
 RAND_FOREST_MODEL = 'rand_forest.model'
 
 
-
 @app.route('/', methods=['GET'])
 def dropdown():
 	pdata = pickle.load(open(PRED_DATA, 'rb'))
-	return render_template('home.html', algo = ['NEURAL_NETWORK', 'LINEAR_REGRESSION', 'RANDOM_FOREST'], term = pdata[3]['term'], grade = pdata[3]['grade'],sub_grade = pdata[3]['sub_grade'], emp_length = pdata[3]['emp_length'], home_ownership = pdata[3]['home_ownership'], verification_status = pdata[3]['verification_status'], purpose = pdata[3]['purpose'], addr_state = pdata[3]['addr_state'])
+	return render_template('home.html', algo = ['NEURAL_NETWORK', 'LINEAR_REGRESSION', 'RANDOM_FOREST'], term = pdata[3]['term'], grade = pdata[3]['grade'],sub_grade = pdata[3]['sub_grade'], emp_length = pdata[3]['emp_length'], home_ownership = pdata[3]['home_ownership'], verification_status = pdata[3]['verification_status'], purpose = pdata[3]['purpose'], addr_state = pdata[3]['addr_state'], status = ['APPROVED', 'NOT APPROVED'])
 
 # sample = {"loan_amnt" : 10902,"term" : " 36 months","installment": 100,"grade": "A","sub_grade": "A2","emp_length": "7 years","home_ownership": "MORTGAGE","annual_inc": 20000,"verification_status": "Source Verified","purpose": "small_business","addr_state": "MA","dti": 15.2,"delinq_2yrs": 1,"inq_last_6mths": 3,"loan_status_Binary": 1}
 
@@ -56,8 +57,10 @@ def get_interest_rate(model, sample, df_max, df_min, categories, features):
     feature_vector_norm = []
 
     for key, value in sample.items():
-        if key in categories:
+        if key in categories:  		
             features_vector[key] = categories[key].index(features_vector[key])
+        if(key == 'loan_status_Binary'):
+        	features_vector[key] = 1;
         features_vector[key] = (float(features_vector[key])-float(df_min_feature[key]))/(float(df_max_feature[key])-float(df_min_feature[key]))
         feature_vector_norm.append(features_vector[key])
     return (model.predict([np.array(feature_vector_norm)]))*(df_max['int_rate']-df_min['int_rate']) + df_min['int_rate']
@@ -88,4 +91,4 @@ def api_message():
 		return "415 Unsupported Media Type"
 
 if __name__== '__main__':
-  	app.run(debug=True, port=80) 
+  	app.run(debug=True, port=5000) 
